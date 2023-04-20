@@ -1,0 +1,33 @@
+Current Project: 
+* Testing velocity 
+      * add a adjustment for when there is a change more than something (Done) 
+            * if it does not work as well it is ok for now 
+      * Add a counter for the number of hit (Done)
+      * Show special colour variation for when a hit is landed. (Done) 
+            * Use maybe add an additional sometime to the yoyo locations when we add it 
+            * instead of using hte existing trail, we need a new effect frame
+      * Add a score number to show on screen (Done)
+      * add option to enable enter to continue mode
+
+Next:
+  * Clean up code 
+  * Try direction change approach 
+  * Learn more advanced string tracking
+
+
+Some ideas for how to do this:
+1) Track the hands as well and determine interaction with the string as like yoyo crossing or coming close to the hands (might not work in some tricks)
+2) Calculate interactions with the string as change of direction of yoyo, or change of velocity (I am exploring this)
+3) Try to learn lane line tracking and see if that works.
+4) Adjust colours so that the string is very obvious (still does not explain how to track the string)
+5) split the string as 1cm segments and track each dot individually LOL
+
+
+
+--------------------
+*) Identify params that impacts tracking
+ans: all params are for the visual effects 
+
+
+3) try different tracking algorithms provided by cv? (Tried. Original one is better)
+ans: No other algorithm seemed to be better. A way to improve tracking was to draw the bounding box better.
