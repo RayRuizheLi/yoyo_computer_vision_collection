@@ -1,18 +1,13 @@
-Current Project: 
-* Testing velocity 
-      * add a adjustment for when there is a change more than something (Done) 
-            * if it does not work as well it is ok for now 
-      * Add a counter for the number of hit (Done)
-      * Show special colour variation for when a hit is landed. (Done) 
-            * Use maybe add an additional sometime to the yoyo locations when we add it 
-            * instead of using hte existing trail, we need a new effect frame
-      * Add a score number to show on screen (Done)
-      * add option to enable enter to continue mode
+Random Notes:
+ * See which of the 3 techniques yeilds the best colour threshold result 
+ * Grab another image 
+
+
 
 Next:
-  * Clean up code 
-  * Try direction change approach 
   * Learn more advanced string tracking
+      * Colour thresholding 
+      * Try to run a lane line algorithm 
 
 
 Some ideas for how to do this:
