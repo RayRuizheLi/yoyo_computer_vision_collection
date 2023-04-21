@@ -3,7 +3,7 @@
 import cv2 as cv 
 
 # Read input video
-video = cv.VideoCapture("yoyo2.mp4")
+video = cv.VideoCapture("input-videos/yoyo2.mp4")
 fps = video.get(cv.CAP_PROP_FPS) 
 print("FPS:",fps)
 
@@ -28,7 +28,7 @@ while True:
 frame_width = int(video.get(3))
 frame_height = int(video.get(4))
 size = (frame_width, frame_height)
-tracked_video = cv.VideoWriter('tracking_video.mp4', cv.VideoWriter_fourcc(*'XVID'),fps, size)
+tracked_video = cv.VideoWriter('output-videos/tracking_video.mp4', cv.VideoWriter_fourcc(*'XVID'),fps, size)
 
 # Read each frame
 while video.isOpened():

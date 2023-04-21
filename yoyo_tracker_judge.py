@@ -26,7 +26,7 @@ start_frame = 100
 
 
 # Read input video
-video = cv.VideoCapture("yoyo2.mp4")
+video = cv.VideoCapture("input-videos/yoyo2.mp4")
 fps = video.get(cv.CAP_PROP_FPS) 
 print("FPS:",fps)
 for i in range(start_frame):
@@ -47,11 +47,11 @@ frame_height = int(video.get(4))
 size = (frame_width, frame_height)
 
 if save_tracking_video:
-    tracked_video = cv.VideoWriter('tracking_video.mp4', cv.VideoWriter_fourcc(*'mp4v'),fps, size)
+    tracked_video = cv.VideoWriter('output-videos/tracking_video.mp4', cv.VideoWriter_fourcc(*'mp4v'),fps, size)
 if save_effect_video:
-    effect_video = cv.VideoWriter('effect_video.mp4', cv.VideoWriter_fourcc(*'mp4v'),fps, size)
+    effect_video = cv.VideoWriter('output-videos/effect_video.mp4', cv.VideoWriter_fourcc(*'mp4v'),fps, size)
 if save_score_effect_video:
-    score_effect_video = cv.VideoWriter('score_effect_video.mp4', cv.VideoWriter_fourcc(*'mp4v'),fps, size)
+    score_effect_video = cv.VideoWriter('output-videos/score_effect_video.mp4', cv.VideoWriter_fourcc(*'mp4v'),fps, size)
 
 
 # Tracking velocity 
