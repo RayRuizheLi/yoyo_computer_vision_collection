@@ -10,9 +10,11 @@ save_score_effect_video = True
 # YoYo Effect Params 
 num_effect_frames = 20 # how long the trail is
 radius = 20
+score_radius = 30
 hue = 179 # Hue is between 0 and 179, could set to None. YoYo effect colour
 score_hue = 200
 saturation = 100 # Saturation is between 0 and 255
+
 
 # Number of frames to fill in the gap between frames. default 5 
 #   A bit surprised but this does not impact tracking but does 
@@ -43,6 +45,7 @@ yoyo_locations = [(-1,-1)]*num_effect_frames # stores the (x,y) location of cent
 frame_width = int(video.get(3))
 frame_height = int(video.get(4))
 size = (frame_width, frame_height)
+
 if save_tracking_video:
     tracked_video = cv.VideoWriter('tracking_video.mp4', cv.VideoWriter_fourcc(*'mp4v'),fps, size)
 if save_effect_video:
@@ -58,8 +61,55 @@ prev_velocity = -1
 velocity_change_cap = 12
 score = 0
 
+# Helper Functions 
 def distance(x1, y1, x2, y2):
     return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+def add_circle_effect_to_frame(target_frame, target_hue, target_saturation, is_score):
+    # Calculate trail mask 
+    trail_mask = np.full((frame_height, frame_width), False)
+    circle_mask = np.full((frame_height, frame_width), False)
+
+    cur_radius = 1
+
+    if is_score:
+        cur_radius = score_radius
+
+    circle_yoyo_locations = interpolated_yoyo_locations
+
+    # The back of the locations contains the most recent location
+    #    we are only interested in the most recent valid position for scoring
+    if is_score:
+        circle_yoyo_locations = reversed(interpolated_yoyo_locations)
+
+    for cx, cy, c_is_score in circle_yoyo_locations:
+        if cx == -1 or cy == -1: 
+            continue
+
+        if is_score and not c_is_score:
+            continue 
+
+        Y, X = np.ogrid[:frame_height, :frame_width]
+        dist_from_center = np.sqrt((X - cx)**2 + (Y - cy)**2)
+        circle_mask = dist_from_center <= cur_radius
+        trail_mask = np.logical_or(trail_mask, circle_mask)
+
+        if is_score:
+            break
+        else:
+            if cur_radius < radius:
+                cur_radius += 1
+
+    # Edit the pixel values
+    if target_hue != None:
+        target_frame[trail_mask, 0] = target_hue
+    if target_saturation != None:
+        target_frame[trail_mask, 1] = target_saturation
+
+    # Make sure the range of values is between 0 and 225
+    target_frame.clip(0,255)
+
+    return target_frame
 
 
 # Read each frame
@@ -131,54 +181,12 @@ while video.isOpened():
                 # Not sure if here should be cur score or next score
                 interpolated_yoyo_locations.append((interpolated_x, interpolated_y, is_cur_score))
 
-        # Calucate the trail mask
-        trail_mask = np.full((frame_height, frame_width), False)
-        circle_mask = np.full((frame_height, frame_width), False)
+        # Create circle effects 
+        effect_frame = add_circle_effect_to_frame(effect_frame, hue, saturation, False)
+        score_effect_frame = add_circle_effect_to_frame(score_effect_frame, hue, saturation, True)
 
-        cur_radius = 1
-        for cx, cy, c_is_score in interpolated_yoyo_locations:
-            if cx == -1 or cy == -1: continue
-            Y, X = np.ogrid[:frame_height, :frame_width]
-            dist_from_center = np.sqrt((X - cx)**2 + (Y - cy)**2)
-            circle_mask = dist_from_center <= cur_radius
-            if cur_radius < radius:
-                cur_radius += 1
-            trail_mask = np.logical_or(trail_mask, circle_mask)
-
-        # Edit the pixel values
-        if hue != None:
-            effect_frame[trail_mask, 0] = hue
-        if saturation != None:
-            effect_frame[trail_mask, 1] = saturation
-    
-        # Make sure the range of values is between 0 and 225
-        effect_frame.clip(0,255)
-
-        # TODO: This is copy and paste of effect trail. Put this in a function and reuse the code
-        # Calculate score trail mask 
-        score_trail_mask = np.full((frame_height, frame_width), False)
-        score_circle_mask = np.full((frame_height, frame_width), False)
-
-        cur_radius = 30
-        for cx, cy, c_is_score in reversed(interpolated_yoyo_locations):
-
-            if cx == -1 or cy == -1 or not c_is_score: continue
-            Y, X = np.ogrid[:frame_height, :frame_width]
-            dist_from_center = np.sqrt((X - cx)**2 + (Y - cy)**2)
-            score_circle_mask = dist_from_center <= cur_radius
-            score_trail_mask = np.logical_or(score_trail_mask, circle_mask)
-            break
-
-        # Edit the pixel values
-        if score_hue != None:
-            score_effect_frame[score_circle_mask, 0] = score_hue
-        if saturation != None:
-            score_effect_frame[score_circle_mask, 1] = saturation
-    
-        # Make sure the range of values is between 0 and 225
-        effect_frame.clip(0,255)
-        score_effect_frame.clip(0,255)
-
+        
+        # Add score 
         if save_score_effect_video:
             font = cv.FONT_HERSHEY_SIMPLEX
             cv.putText(score_effect_frame, "score: " + str(score), (50, 50), font, 1, (0, 255, 255), 2, cv.LINE_AA)
