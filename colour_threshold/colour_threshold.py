@@ -8,8 +8,8 @@ img = cv2.imread('yoyoing.png')
 hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
 # Define range of yellow color in HSV
-lower_yellow = np.array([0, 0, 0])
-upper_yellow = np.array([40, 255, 255])
+lower_yellow = np.array([10, 0, 0])
+upper_yellow = np.array([180, 255, 255])
 
 # Threshold the HSV image to get only yellow colors
 mask = cv2.inRange(hsv_img, lower_yellow, upper_yellow)
