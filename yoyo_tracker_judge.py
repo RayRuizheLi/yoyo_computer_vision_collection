@@ -26,7 +26,7 @@ start_frame = 100
 
 
 # Read input video
-video = cv.VideoCapture("yoyo2.mp4")
+video = cv.VideoCapture("vids/sinclair_blue_yoyo_green_string_bind.mp4")
 fps = video.get(cv.CAP_PROP_FPS) 
 print("FPS:",fps)
 for i in range(start_frame):
