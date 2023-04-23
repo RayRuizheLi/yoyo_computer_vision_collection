@@ -27,8 +27,6 @@ while video.isOpened():
     isTrue, frame = video.read()
     if isTrue:
         i += 1
-        if i % 50 == 0:
-            print(i)
         green_pixels = get_green_mask(frame)
         vid_writer.writeFrame(green_pixels)
     else:
