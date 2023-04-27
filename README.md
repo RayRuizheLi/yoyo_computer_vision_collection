@@ -16,3 +16,14 @@ The project uses `CV2` version `4.7.0`.
 ## Future Development
 
 Future development will focus on figuring out how to track or detect the string.
+
+## Photos 
+
+### Trailing Animation from Reference Project and Judge V1
+![Trailing Animation from Reference Project and Judge V1](./photos/trailing_and_score.png)
+
+### In Development: Colour Thresholding
+![In Development: Colour Thresholding](./photos/colour_profile.png)
+
+### In Development: String Detection
+![In Development: String Detection](./photos/string_detect_before_after.png)
