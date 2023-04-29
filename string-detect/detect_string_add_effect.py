@@ -4,16 +4,13 @@ import math
 import skvideo.io
 
 video = cv.VideoCapture("../input-videos/godspeed_trimmed.mp4") # Works well for tiktok close ups! 
-# video = cv.VideoCapture("../input-videos/2010_wyyc_1a_02_hiroyuki_suzuki.mp4") # Not good. But we can see the yoyo? Maybe need colour adjustment? 
-# video = cv.VideoCapture("../input-videos/2022_usnyyc_1a_ray_li.mp4") # Not good 
-# video = cv.VideoCapture("../input-videos/sinclair_blue_yoyo_green_string_bind.mp4") # Original, works well, but very specific camera angle.
+
 fps = video.get(cv.CAP_PROP_FPS)
 
 frame_width = int(video.get(3))
 frame_height = int(video.get(4))
 size = (frame_width, frame_height)
-# effect_video = cv.VideoWriter('string_detection.mp4', cv.VideoWriter_fourcc(*'mp4v'),fps, size)
-vid_writer = skvideo.io.FFmpegWriter("../output-videos/string_detection.mp4")
+vid_writer = skvideo.io.FFmpegWriter("../output-videos/string_detection_effect.mp4")
 
 GREEN_MIN = (35, 20, 50)
 GREEN_MAX = (70, 255, 230)
@@ -30,8 +27,14 @@ while video.isOpened():
     isTrue, frame = video.read()
     if isTrue:
         i += 1
-        green_pixels = get_green_mask(frame)
-        vid_writer.writeFrame(green_pixels)
+        green_mask = get_green_mask(frame)
+        contours, hierarchy = cv.findContours(green_mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+        mask = np.zeros_like(green_mask)
+        cv.drawContours(mask, contours, -1, 255, 2)
+        kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
+        mask = cv.dilate(mask, kernel, iterations=1)
+        frame[mask == 255] = [255, 255, 255]
+        vid_writer.writeFrame(frame)
     else:
         break
 
