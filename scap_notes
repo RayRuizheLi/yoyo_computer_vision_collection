@@ -1,14 +1,21 @@
 Random Notes:
- * See which of the 3 techniques yeilds the best colour threshold result 
- * Grab another image 
+ * Transitioning to adding visual effects etc 
+
 
 
 
 Next:
-  * Learn more advanced string tracking
-      * Colour thresholding 
-      * Try to run a lane line algorithm 
 
+  * We can also add visual effects to the yoyo and string such as outlines etc. THis works really well! 
+  * I think we can just use colour thresholding:
+    * Flow goes like this: 
+      * Find colour threshold for string
+      * Choose effect 
+      * Find colour threshold for yoyo 
+      * Choose effect
+
+
+  * Now we can do some calculations of the positions of the string and the yoyo etc 
 
 Some ideas for how to do this:
 1) Track the hands as well and determine interaction with the string as like yoyo crossing or coming close to the hands (might not work in some tricks)

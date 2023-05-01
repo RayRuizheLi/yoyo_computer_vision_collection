@@ -3,7 +3,8 @@ import numpy as np
 import math
 import skvideo.io
 
-video = cv.VideoCapture("../input-videos/godspeed_trimmed.mp4") # Works well for tiktok close ups! 
+video = cv.VideoCapture("../input-videos/red_yoyo.mp4")
+# video = cv.VideoCapture("../input-videos/godspeed_trimmed.mp4") # Works well for tiktok close ups! 
 # video = cv.VideoCapture("../input-videos/2010_wyyc_1a_02_hiroyuki_suzuki.mp4") # Not good. But we can see the yoyo? Maybe need colour adjustment? 
 # video = cv.VideoCapture("../input-videos/2022_usnyyc_1a_ray_li.mp4") # Not good 
 # video = cv.VideoCapture("../input-videos/sinclair_blue_yoyo_green_string_bind.mp4") # Original, works well, but very specific camera angle.
