@@ -6,6 +6,8 @@ Random Notes:
 
 Next:
 
+  * Create a colour picker that works on an image. Then create a colour picker that works on a video
+  
   * We can also add visual effects to the yoyo and string such as outlines etc. THis works really well! 
   * I think we can just use colour thresholding:
     * Flow goes like this: 
