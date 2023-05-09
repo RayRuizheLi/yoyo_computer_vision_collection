@@ -9,22 +9,22 @@ def nothing(x):
 image = cv.imread("../input-videos/string.png")
 cv.namedWindow('Colour Picker')
 
-cv.createTrackbar('Min H', 'image', 35, 255, nothing)
-cv.createTrackbar('Min S', 'image', 20, 255, nothing)
-cv.createTrackbar('Min V', 'image', 50, 255, nothing)
+cv.createTrackbar('Min H', 'Colour Picker', 35, 255, nothing)
+cv.createTrackbar('Min S', 'Colour Picker', 20, 255, nothing)
+cv.createTrackbar('Min V', 'Colour Picker', 50, 255, nothing)
 
-cv.createTrackbar('Max H', 'image', 70, 255, nothing)
-cv.createTrackbar('Max S', 'image', 255, 255, nothing)
-cv.createTrackbar('Max V', 'image', 230, 255, nothing)
+cv.createTrackbar('Max H', 'Colour Picker', 70, 255, nothing)
+cv.createTrackbar('Max S', 'Colour Picker', 255, 255, nothing)
+cv.createTrackbar('Max V', 'Colour Picker', 230, 255, nothing)
 
 while True:
     # Get current trackbar values
-    colour_min_h = cv.getTrackbarPos('Min H', 'image')
-    colour_min_s = cv.getTrackbarPos('Min S', 'image')
-    colour_min_v = cv.getTrackbarPos('Min V', 'image')
-    colour_max_h = cv.getTrackbarPos('Max H', 'image')
-    colour_max_s = cv.getTrackbarPos('Max S', 'image')
-    colour_max_v = cv.getTrackbarPos('Max V', 'image')
+    colour_min_h = cv.getTrackbarPos('Min H', 'Colour Picker')
+    colour_min_s = cv.getTrackbarPos('Min S', 'Colour Picker')
+    colour_min_v = cv.getTrackbarPos('Min V', 'Colour Picker')
+    colour_max_h = cv.getTrackbarPos('Max H', 'Colour Picker')
+    colour_max_s = cv.getTrackbarPos('Max S', 'Colour Picker')
+    colour_max_v = cv.getTrackbarPos('Max V', 'Colour Picker')
     
     COLOUR_MIN = (colour_min_h, colour_min_s, colour_min_v)
     COLOUR_MAX = (colour_max_h, colour_max_s, colour_max_v)
@@ -35,7 +35,7 @@ while True:
     result = cv.bitwise_and(image, image, mask=colour_mask)
     
     # Display the result
-    cv.imshow('image', result)
+    cv.imshow('Colour Picker', result)
     
     # Wait for a key press and check if the 'q' key was pressed
     if cv.waitKey(1) & 0xFF == ord('q'):
