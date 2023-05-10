@@ -1,6 +1,9 @@
 import cv2 as cv
 
-video = cv.VideoCapture("../input-videos/red_yoyo.mp4")
+video = cv.VideoCapture("../input-videos/v_1_DNA.MP4")
+
+# adjust wait time between frames
+wait_time = 500
 
 def nothing(x):
     pass
@@ -30,7 +33,7 @@ pause = False  # Flag to indicate if the video playback is paused
 while True:
     if not pause:
       # Wait for a key press
-      key = cv.waitKey(1000)
+      key = cv.waitKey(wait_time)
       if key & 0xFF == ord('q'):  # Quit if 'q' key is pressed
           break
       elif key & 0xFF == ord('n'):  # Pause/Resume if 'n' key is pressed
