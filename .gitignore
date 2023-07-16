@@ -1,2 +1,7 @@
-# Ignore files larger than 50 MB
-*.50m
+# ignore video input and output folders due to large size 
+input_videos/
+intermediate_videos/
+output_videos/
+
+# ignore py cache
+**/__pycache__/
