@@ -2,48 +2,37 @@ import cv2 as cv
 import numpy as np
 import skvideo.io
 from tqdm import tqdm
+from colour_filter_settings import FilterEffectTypes
 
-def filter_colour(colour_filter_setting):
-    video = cv.VideoCapture(colour_filter_setting.input_path)
-    vid_writer = skvideo.io.FFmpegWriter(colour_filter_setting.output_path)
-    total_frames = int(video.get(cv.CAP_PROP_FRAME_COUNT))
-    
-    if colour_filter_setting.is_show_filter_process:
-        create_window(colour_filter_setting.setting_name)
-
-    for i in tqdm(range(total_frames), desc = generate_filter_description(colour_filter_setting.setting_name)):
-        is_read_success, frame = video.read()
-
-        if is_read_success:
-            effect_result = generate_effect_result(frame, colour_filter_setting)
-            
-            if colour_filter_setting.is_show_filter_process:
-                show_effect_result(colour_filter_setting, effect_result)
-
-            vid_writer.writeFrame(effect_result)
-            i += 1
-        else:
-            break
-
-        # Required for effect to show in CV window
-        if colour_filter_setting.is_show_filter_process:
-            wait_for_effect_to_show()
-
-    video.release()
-    vid_writer.close()
-    cv.destroyAllWindows()
-
+# TODO: package video related settings to an object to reduce function variable counts s
+# TODO: organize functions to the order that it is getting called 
 def create_window(setting_name):
     cv.namedWindow(setting_name, cv.WINDOW_NORMAL)
 
 def generate_filter_description(setting_name):
     return "Progress for " + setting_name
 
-def generate_effect_result(frame, colour_filter_setting):
+def find_current_effect_colour(frame_count, colour_filter_setting):
+    if colour_filter_setting.effect_type == FilterEffectTypes.SINGLE_COLOUR:
+        return colour_filter_setting.effect_setting.effect_colour
+    elif colour_filter_setting.effect_type == FilterEffectTypes.RAINBOW: 
+        colour_index = frame_count % len(colour_filter_setting.effect_setting.effect_colours)
+        return colour_filter_setting.effect_setting.effect_colours[colour_index]
+    else:
+        # TODO: Find the correct error message
+        raise ValueError("Effect type does not exist")
+
+def generate_effect_mask(frame_count, colour_mask, frame_shape, colour_filter_setting):
+    effect_mask = np.zeros(frame_shape, dtype=np.uint8)
+
+    effect_mask[colour_mask == 255] = find_current_effect_colour(frame_count, colour_filter_setting)
+    return effect_mask
+
+def generate_effect_result(frame_count, frame, colour_filter_setting):
     colour_mask = generate_colour_mask(frame, colour_filter_setting.value_HSV)
     zeroed_colour_mask = generate_zeroed_contours_colour_mask(colour_mask)
     dilated_mask = generate_dilated_mask(zeroed_colour_mask)
-    effect_mask = generate_effect_mask(dilated_mask, frame.shape, colour_filter_setting.effect_colour)
+    effect_mask = generate_effect_mask(frame_count, dilated_mask, frame.shape, colour_filter_setting)
 
     effect = cv.addWeighted(frame, 1, effect_mask, 1, 0)
     effect_rgb = cv.cvtColor(effect, cv.COLOR_BGR2RGB)
@@ -71,11 +60,6 @@ def generate_dilated_mask(mask):
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
     return cv.dilate(mask, kernel, iterations=1)
 
-def generate_effect_mask(colour_mask, frame_shape, effect_colour):
-    effect_mask = np.zeros(frame_shape, dtype=np.uint8)
-    effect_mask[colour_mask == 255] = effect_colour
-    return effect_mask
-
 def show_effect_result(colour_filter_setting, effect_result):
     result_bgr = cv.cvtColor(effect_result, cv.COLOR_RGB2BGR)
     cv.imshow(colour_filter_setting.setting_name, result_bgr)
@@ -83,3 +67,33 @@ def show_effect_result(colour_filter_setting, effect_result):
 def wait_for_effect_to_show():
     WAIT_TIME_IN_MILLISECONDS = 1
     cv.waitKey(WAIT_TIME_IN_MILLISECONDS)
+
+def filter_colour(colour_filter_setting):
+    video = cv.VideoCapture(colour_filter_setting.input_path)
+    vid_writer = skvideo.io.FFmpegWriter(colour_filter_setting.output_path)
+    total_frames = int(video.get(cv.CAP_PROP_FRAME_COUNT))
+    
+    if colour_filter_setting.is_show_filter_process:
+        create_window(colour_filter_setting.setting_name)
+
+    for i in tqdm(range(total_frames), desc = generate_filter_description(colour_filter_setting.setting_name)):
+        is_read_success, frame = video.read()
+
+        if is_read_success:
+            effect_result = generate_effect_result(i, frame, colour_filter_setting)
+            
+            if colour_filter_setting.is_show_filter_process:
+                show_effect_result(colour_filter_setting, effect_result)
+
+            vid_writer.writeFrame(effect_result)
+            i += 1
+        else:
+            break
+
+        # Required for effect to show in CV window
+        if colour_filter_setting.is_show_filter_process:
+            wait_for_effect_to_show()
+
+    video.release()
+    vid_writer.close()
+    cv.destroyAllWindows()
